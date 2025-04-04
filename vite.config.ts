@@ -4,6 +4,10 @@ import path from "path";
 //import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
+export default defineConfig({
+  base: "/ggreen3/",
+});
+
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
