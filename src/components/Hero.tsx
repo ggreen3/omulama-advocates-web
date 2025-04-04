@@ -1,8 +1,25 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const Hero = () => {
+  const navigate = useNavigate();
+
+  const handlePracticeAreasClick = () => {
+    const practiceSection = document.getElementById('practice-areas');
+    if (practiceSection) {
+      practiceSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleConsultationClick = () => {
+    const contactSection = document.getElementById('contact');
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section 
       id="home" 
@@ -31,10 +48,17 @@ const Hero = () => {
           </p>
           
           <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 animate-fade-in">
-            <Button className="bg-law-primary hover:bg-law-primary/90 text-white text-lg px-8 py-6">
+            <Button 
+              className="bg-law-primary hover:bg-law-primary/90 text-white text-lg px-8 py-6"
+              onClick={handlePracticeAreasClick}
+            >
               Our Practice Areas
             </Button>
-            <Button variant="outline" className="border-white text-white hover:bg-white/10 text-lg px-8 py-6">
+            <Button 
+              variant="outline" 
+              className="border-white text-white hover:bg-white/10 text-lg px-8 py-6"
+              onClick={handleConsultationClick}
+            >
               Schedule Consultation
             </Button>
           </div>

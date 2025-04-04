@@ -2,12 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const isHomePage = location.pathname === '/';
 
   useEffect(() => {
@@ -25,6 +26,19 @@ const Header = () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
+  const handleConsultClick = () => {
+    if (isHomePage) {
+      // If on home page, scroll to contact section
+      const contactSection = document.getElementById('contact');
+      if (contactSection) {
+        contactSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      // If on another page, navigate to home page and then to contact section
+      navigate('/#contact');
+    }
+  };
 
   return (
     <header
@@ -64,7 +78,10 @@ const Header = () => {
                 <Link to="/#contact" className="text-law-secondary hover:text-law-primary transition-colors">Contact</Link>
               </>
             )}
-            <Button className="bg-law-secondary hover:bg-law-primary text-white transition-colors">
+            <Button 
+              className="bg-law-secondary hover:bg-law-primary text-white transition-colors"
+              onClick={handleConsultClick}
+            >
               Consult Now
             </Button>
           </nav>
@@ -103,7 +120,10 @@ const Header = () => {
                   <Link to="/#contact" className="text-law-secondary hover:text-law-primary transition-colors py-2">Contact</Link>
                 </>
               )}
-              <Button className="bg-law-secondary hover:bg-law-primary text-white transition-colors w-full">
+              <Button 
+                className="bg-law-secondary hover:bg-law-primary text-white transition-colors w-full"
+                onClick={handleConsultClick}
+              >
                 Consult Now
               </Button>
             </div>

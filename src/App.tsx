@@ -7,6 +7,7 @@ import BlogPost from '@/pages/BlogPost';
 import Login from '@/pages/Login';
 import Admin from '@/pages/Admin';
 import NotFound from '@/pages/NotFound';
+import NewBlogPost from '@/pages/NewBlogPost';
 import '@/App.css';
 
 // Add event listener to intercept form submissions and store appointment data
@@ -63,6 +64,10 @@ const router = createBrowserRouter([
   {
     path: '/admin',
     element: <Admin />,
+  },
+  {
+    path: '/admin/blog/new',
+    element: <NewBlogPost />,
   },
   {
     path: '*',

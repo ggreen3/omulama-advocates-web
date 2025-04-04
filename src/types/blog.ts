@@ -8,4 +8,17 @@ export interface BlogPost {
   date: string;
   content: string;
   excerpt: string;
+  tags?: string[];
+  views?: number;
+  liked?: boolean;
+  comments?: Comment[];
+}
+
+export interface Comment {
+  id: number;
+  author: string;
+  email: string;
+  content: string;
+  date: string;
+  approved: boolean;
 }

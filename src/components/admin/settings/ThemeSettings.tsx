@@ -1,8 +1,9 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Palette, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
 
 interface SiteSettings {
   firmName: string;
@@ -28,6 +29,33 @@ const ThemeSettings = ({
   handleSaveSettings,
   applyTheme
 }: ThemeSettingsProps) => {
+  const { toast } = useToast();
+  
+  // Apply theme colors when component loads
+  useEffect(() => {
+    document.documentElement.style.setProperty('--law-primary', siteSettings.primaryColor);
+    document.documentElement.style.setProperty('--law-secondary', siteSettings.secondaryColor);
+  }, [siteSettings.primaryColor, siteSettings.secondaryColor]);
+  
+  const handleColorChange = (type: 'primaryColor' | 'secondaryColor', value: string) => {
+    setSiteSettings(prev => ({
+      ...prev,
+      [type]: value
+    }));
+    
+    // Apply the color change immediately
+    document.documentElement.style.setProperty(`--law-${type === 'primaryColor' ? 'primary' : 'secondary'}`, value);
+  };
+  
+  const handleSaveTheme = () => {
+    handleSaveSettings();
+    toast({
+      title: "Theme Updated",
+      description: "Your theme changes have been applied to the entire website.",
+      duration: 3000,
+    });
+  };
+  
   return (
     <div>
       <h3 className="text-lg font-medium text-gray-900 mb-4">Theme Customization</h3>
@@ -92,14 +120,24 @@ const ThemeSettings = ({
                 <input 
                   type="color" 
                   value={siteSettings.primaryColor}
-                  onChange={e => setSiteSettings({...siteSettings, primaryColor: e.target.value})}
+                  onChange={e => handleColorChange('primaryColor', e.target.value)}
                   className="w-10 h-10 border-0"
                 />
                 <Input 
                   value={siteSettings.primaryColor}
-                  onChange={e => setSiteSettings({...siteSettings, primaryColor: e.target.value})}
+                  onChange={e => handleColorChange('primaryColor', e.target.value)}
                   className="ml-2"
                 />
+              </div>
+              <div className="mt-2 flex space-x-2">
+                {['#e60000', '#990000', '#cc0000', '#ff3333', '#cc3300'].map(color => (
+                  <div 
+                    key={color} 
+                    className="w-8 h-8 rounded-full cursor-pointer border border-gray-300"
+                    style={{ backgroundColor: color }}
+                    onClick={() => handleColorChange('primaryColor', color)}
+                  ></div>
+                ))}
               </div>
             </div>
             
@@ -109,14 +147,24 @@ const ThemeSettings = ({
                 <input 
                   type="color" 
                   value={siteSettings.secondaryColor}
-                  onChange={e => setSiteSettings({...siteSettings, secondaryColor: e.target.value})}
+                  onChange={e => handleColorChange('secondaryColor', e.target.value)}
                   className="w-10 h-10 border-0"
                 />
                 <Input 
                   value={siteSettings.secondaryColor}
-                  onChange={e => setSiteSettings({...siteSettings, secondaryColor: e.target.value})}
+                  onChange={e => handleColorChange('secondaryColor', e.target.value)}
                   className="ml-2"
                 />
+              </div>
+              <div className="mt-2 flex space-x-2">
+                {['#0047AB', '#00264d', '#3366cc', '#000066', '#1a1a66'].map(color => (
+                  <div 
+                    key={color} 
+                    className="w-8 h-8 rounded-full cursor-pointer border border-gray-300"
+                    style={{ backgroundColor: color }}
+                    onClick={() => handleColorChange('secondaryColor', color)}
+                  ></div>
+                ))}
               </div>
             </div>
           </div>
@@ -125,7 +173,7 @@ const ThemeSettings = ({
         <div className="flex justify-end">
           <Button 
             className="bg-law-secondary hover:bg-law-primary text-white"
-            onClick={handleSaveSettings}
+            onClick={handleSaveTheme}
           >
             <Palette className="mr-2 h-4 w-4" />
             Apply Theme

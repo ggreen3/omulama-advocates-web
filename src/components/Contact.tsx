@@ -73,6 +73,33 @@ const Contact = () => {
     }, 1500);
   };
 
+  const handleBookAppointment = () => {
+    // Store consultation request
+    const appointment = {
+      name: "Scheduled from website",
+      email: "appointment@example.com",
+      phone: "",
+      service: "General Consultation",
+      message: "Appointment requested from website",
+      date: new Date().toISOString().split('T')[0],
+      time: '10:00 AM',
+      status: 'pending'
+    };
+    
+    // Store in localStorage
+    const existingRequests = localStorage.getItem('consultationRequests');
+    const requests = existingRequests ? JSON.parse(existingRequests) : [];
+    requests.push(appointment);
+    localStorage.setItem('consultationRequests', JSON.stringify(requests));
+    
+    // Notify the user
+    toast({
+      title: "Appointment Requested",
+      description: "Your appointment request has been recorded. We will contact you shortly.",
+      duration: 5000,
+    });
+  };
+
   return (
     <section id="contact" className="py-20 bg-law-secondary text-white">
       <div className="container mx-auto px-4">
@@ -232,7 +259,7 @@ const Contact = () => {
                 </p>
                 <Button 
                   className="w-full bg-law-primary hover:bg-law-primary/90 text-white font-bold"
-                  onClick={() => window.open("https://calendly.com", "_blank")}
+                  onClick={handleBookAppointment}
                 >
                   Book Appointment
                 </Button>
