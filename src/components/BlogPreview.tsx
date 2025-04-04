@@ -92,16 +92,20 @@ const BlogPreview = () => {
                     <span>By {post.author}</span>
                   </div>
                   <h3 className="text-xl font-bold text-law-secondary mb-3 hover:text-law-primary transition-colors duration-300">
-                    {post.title}
+                    <Link to={`/blog/${post.id}`}>
+                      {post.title}
+                    </Link>
                   </h3>
                   <p className="text-gray-600 mb-4">
                     {post.excerpt}
                   </p>
-                  <Button 
-                    className="mt-2 bg-law-secondary hover:bg-law-primary text-white transition-colors duration-300"
-                  >
-                    Read More
-                  </Button>
+                  <Link to={`/blog/${post.id}`}>
+                    <Button 
+                      className="mt-2 bg-law-secondary hover:bg-law-primary text-white transition-colors duration-300"
+                    >
+                      Read More
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
             </div>
