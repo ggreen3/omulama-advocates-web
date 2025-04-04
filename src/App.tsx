@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Toaster } from '@/components/ui/toaster';
 import Index from '@/pages/Index';

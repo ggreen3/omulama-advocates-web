@@ -1,208 +1,244 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Save } from 'lucide-react';
-import { allBlogPosts } from '@/data/blogData';
+import { blogPosts } from '@/data/blogData';
+import { useToast } from '@/hooks/use-toast';
 import { BlogPost } from '@/types/blog';
 
 const NewBlogPost = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [formData, setFormData] = useState<Omit<BlogPost, 'id'>>({
+  const [formData, setFormData] = useState({
     title: '',
-    category: '',
-    author: '',
-    image: 'https://images.unsplash.com/photo-1589994965851-a8f479c573a9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80',
-    date: new Date().toISOString().split('T')[0],
+    category: 'Corporate Law',
     content: '',
-    excerpt: ''
+    excerpt: '',
+    tags: [] as string[],
+    image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
   });
-
-  useEffect(() => {
-    // Check if user is logged in
-    const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    
-    if (!loggedIn) {
-      // Redirect to login page if not logged in
-      navigate('/login');
-    } else {
-      setIsLoggedIn(true);
-    }
-    
-    // Update document title
-    document.title = "New Blog Post - Edwin Omulama & Associates Advocates";
-  }, [navigate]);
-
+  
+  const [tagInput, setTagInput] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    
-    // If this is the excerpt field and it's empty, generate an excerpt from content
-    if (name === 'content' && !formData.excerpt) {
-      const excerpt = value.length > 150 ? value.substring(0, 150) + '...' : value;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+  
+  const handleAddTag = () => {
+    if (tagInput.trim() !== '' && !formData.tags.includes(tagInput.trim())) {
       setFormData(prev => ({
         ...prev,
-        [name]: value,
-        excerpt: excerpt
+        tags: [...prev.tags, tagInput.trim()]
       }));
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        [name]: value
-      }));
+      setTagInput('');
     }
   };
-
+  
+  const handleRemoveTag = (tagToRemove: string) => {
+    setFormData(prev => ({
+      ...prev,
+      tags: prev.tags.filter(tag => tag !== tagToRemove)
+    }));
+  };
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSaving(true);
     
-    // Get existing blog posts
-    let blogPosts = [...allBlogPosts];
-    const savedPosts = localStorage.getItem('blogPosts');
-    if (savedPosts) {
-      blogPosts = JSON.parse(savedPosts);
-    }
-    
-    // Generate a new ID (max id + 1)
-    const maxId = blogPosts.reduce((max, post) => Math.max(max, post.id), 0);
-    const newPost: BlogPost = {
-      ...formData,
-      id: maxId + 1
-    };
-    
-    // Add the new post
-    blogPosts.push(newPost);
-    
-    // Save to localStorage
-    localStorage.setItem('blogPosts', JSON.stringify(blogPosts));
-    
-    // Show success message
-    toast({
-      title: "Blog Post Created",
-      description: "Your new blog post has been published successfully.",
-      duration: 3000,
-    });
-    
-    // Redirect to admin page
-    navigate('/admin');
+    // Simulate API call to save blog post
+    setTimeout(() => {
+      // Create new blog post with generated ID
+      const newPost: BlogPost = {
+        id: blogPosts.length + 1,
+        title: formData.title,
+        category: formData.category,
+        author: 'Edwin Omulama',
+        image: formData.image,
+        date: new Date().toISOString().split('T')[0],
+        content: formData.content,
+        excerpt: formData.excerpt,
+        tags: formData.tags,
+        views: 0,
+        liked: false,
+        comments: []
+      };
+      
+      // Add new post to blog posts array
+      blogPosts.unshift(newPost);
+      
+      // Show success message
+      toast({
+        title: "Blog Post Published",
+        description: "Your blog post has been successfully published.",
+        duration: 5000,
+      });
+      
+      // Redirect to blog page
+      navigate('/blog');
+      
+      setIsSaving(false);
+    }, 1500);
   };
-
-  if (!isLoggedIn) {
-    return null; // Don't render anything while checking login state
-  }
-
+  
   return (
-    <div className="min-h-screen bg-gray-50 pt-20">
+    <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold text-law-secondary">Create New Blog Post</h1>
-          <Button variant="outline" onClick={() => navigate('/admin')}>
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Admin
+        <div className="mb-8 flex items-center">
+          <Button 
+            variant="ghost"
+            className="mr-4"
+            onClick={() => navigate('/admin')}
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Admin
           </Button>
+          <h1 className="text-2xl font-bold">Create New Blog Post</h1>
         </div>
         
-        <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="bg-white rounded-lg shadow-md p-6">
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Title
-                </label>
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-law-primary/50"
-                  required
-                />
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+                    Title
+                  </label>
+                  <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-law-primary"
+                    placeholder="Enter post title"
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+                    Category
+                  </label>
+                  <select
+                    id="category"
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-law-primary"
+                  >
+                    <option value="Corporate Law">Corporate Law</option>
+                    <option value="Criminal Law">Criminal Law</option>
+                    <option value="Family Law">Family Law</option>
+                    <option value="Real Estate">Real Estate</option>
+                    <option value="Intellectual Property">Intellectual Property</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label htmlFor="excerpt" className="block text-sm font-medium text-gray-700 mb-1">
+                    Excerpt
+                  </label>
+                  <textarea
+                    id="excerpt"
+                    name="excerpt"
+                    value={formData.excerpt}
+                    onChange={handleChange}
+                    required
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-law-primary"
+                    placeholder="Brief summary of the post"
+                  ></textarea>
+                </div>
+                
+                <div>
+                  <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-1">
+                    Featured Image URL
+                  </label>
+                  <input
+                    type="text"
+                    id="image"
+                    name="image"
+                    value={formData.image}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-law-primary"
+                    placeholder="Image URL"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Tags
+                  </label>
+                  <div className="flex">
+                    <input
+                      type="text"
+                      value={tagInput}
+                      onChange={(e) => setTagInput(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-law-primary"
+                      placeholder="Add a tag"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleAddTag();
+                        }
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      className="rounded-l-none bg-law-primary"
+                      onClick={handleAddTag}
+                    >
+                      Add
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {formData.tags.map(tag => (
+                      <div key={tag} className="bg-gray-200 text-gray-700 px-2 py-1 rounded-md text-sm flex items-center">
+                        {tag}
+                        <button
+                          type="button"
+                          className="ml-1 text-gray-500 hover:text-gray-700 focus:outline-none"
+                          onClick={() => handleRemoveTag(tag)}
+                        >
+                          &times;
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Category
-                </label>
-                <select
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-law-primary/50"
-                  required
-                >
-                  <option value="">Select Category</option>
-                  <option value="Corporate Law">Corporate Law</option>
-                  <option value="Criminal Law">Criminal Law</option>
-                  <option value="Family Law">Family Law</option>
-                  <option value="Property Law">Property Law</option>
-                  <option value="Tax Law">Tax Law</option>
-                  <option value="Litigation">Litigation</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Author
-                </label>
-                <input
-                  type="text"
-                  name="author"
-                  value={formData.author}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-law-primary/50"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Image URL
-                </label>
-                <input
-                  type="text"
-                  name="image"
-                  value={formData.image}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-law-primary/50"
-                  required
-                />
-              </div>
-              
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Excerpt (Summary)
-                </label>
-                <Textarea
-                  name="excerpt"
-                  value={formData.excerpt}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-law-primary/50"
-                  rows={3}
-                  placeholder="Brief summary of the blog post"
-                  required
-                />
-              </div>
-              
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
                   Content
                 </label>
-                <Textarea
+                <textarea
+                  id="content"
                   name="content"
                   value={formData.content}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-law-primary/50"
-                  rows={12}
                   required
-                />
+                  rows={16}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-law-primary"
+                  placeholder="Write your blog post content here..."
+                ></textarea>
               </div>
             </div>
             
             <div className="flex justify-end">
-              <Button className="bg-law-primary hover:bg-law-primary/90 text-white" type="submit">
-                <Save className="mr-2 h-4 w-4" /> Publish Blog Post
+              <Button 
+                type="submit" 
+                className="bg-law-primary"
+                disabled={isSaving}
+              >
+                <Save className="mr-2 h-4 w-4" />
+                {isSaving ? 'Publishing...' : 'Publish Post'}
               </Button>
             </div>
           </form>
