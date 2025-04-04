@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Save } from 'lucide-react';
-import { blogPosts } from '@/data/blogData';
+import { allBlogPosts } from '@/data/blogData';
 import { useToast } from '@/hooks/use-toast';
 import { BlogPost } from '@/types/blog';
 
@@ -55,7 +54,7 @@ const NewBlogPost = () => {
     setTimeout(() => {
       // Create new blog post with generated ID
       const newPost: BlogPost = {
-        id: blogPosts.length + 1,
+        id: allBlogPosts.length + 1,
         title: formData.title,
         category: formData.category,
         author: 'Edwin Omulama',
@@ -70,7 +69,7 @@ const NewBlogPost = () => {
       };
       
       // Add new post to blog posts array
-      blogPosts.unshift(newPost);
+      allBlogPosts.unshift(newPost);
       
       // Show success message
       toast({
