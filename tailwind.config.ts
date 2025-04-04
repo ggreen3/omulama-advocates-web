@@ -63,10 +63,10 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Custom colors for the law firm
+				// Updated colors for the law firm
 				law: {
-					"navy": "#0A2342",
-					"gold": "#D4AF37",
+					"primary": "#e60000", // Red
+					"secondary": "#0047AB", // Royal Blue
 					"light-gray": "#F5F5F5",
 					"dark-gray": "#333333",
 				}

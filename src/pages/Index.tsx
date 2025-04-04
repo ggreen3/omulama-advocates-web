@@ -5,6 +5,7 @@ import Hero from '@/components/Hero';
 import About from '@/components/About';
 import PracticeAreas from '@/components/PracticeAreas';
 import Team from '@/components/Team';
+import BlogPreview from '@/components/BlogPreview';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
@@ -26,6 +27,7 @@ const Index = () => {
         <About />
         <PracticeAreas />
         <Team />
+        <BlogPreview />
         <Contact />
       </main>
       <Footer />
